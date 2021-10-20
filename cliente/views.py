@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import person
+from .models import Person
 from .form import personForm
 
-@login_required
 
+@login_required
 def persons_list(request):
-    persons = person.objects.all()
+    persons = Person.objects.all()
     return render(request, 'person.html', {'persons': persons})
+
 
 @login_required
 def persons_new(request):
@@ -18,10 +19,11 @@ def persons_new(request):
         return redirect('person_list')
     return render(request, 'person_form.html', {'form': form})
 
+
 @login_required
 def person_update(request, id):
-    Person = get_object_or_404(person, pk=id)
-    form = personForm(request.POST or None, request.FILES or None, instance=Person)
+    person = get_object_or_404(Person, pk=id)
+    form = personForm(request.POST or None, request.FILES or None, instance=person)
 
     if form.is_valid():
         form.save()
@@ -29,12 +31,12 @@ def person_update(request, id):
 
     return render(request, 'person_form.html', {'form': form})
 
+
 @login_required
 def person_delete(request, id):
-    Person = get_object_or_404(person, pk=id)
+    person = get_object_or_404(Person, pk=id)
 
     if request.method == 'POST':
-        Person.delete()
+        Person.delete(person)
         return redirect('person_list')
     return render(request, 'person_delete_confirm.html', {'person': person})
-
